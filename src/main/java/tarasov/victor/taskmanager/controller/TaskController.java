@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import tarasov.victor.taskmanager.dto.TaskDto;
 import tarasov.victor.taskmanager.model.Status;
 import tarasov.victor.taskmanager.model.Task;
-import tarasov.victor.taskmanager.service.FilteringService;
+import tarasov.victor.taskmanager.service.FilterCriteria;
 import tarasov.victor.taskmanager.service.TaskService;
 
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 @Tag(name = "Tasks", description = "Endpoints for managing tasks")
 public class TaskController {
     private final TaskService taskService;
-    private final FilteringService filteringService;
 
     @GetMapping
     @Operation(summary = "Retrieve tasks", description = "Retrieves a list of tasks optionally filtered by title, description, and status.")
@@ -30,8 +29,8 @@ public class TaskController {
     public List<Task> findAll(@RequestParam(required = false) String title,
                               @RequestParam(required = false) String description,
                               @RequestParam(required = false) Status status) {
-        var tasks = taskService.findAll();
-        return filteringService.filter(tasks, title, description, status);
+        var filterCriteria = new FilterCriteria(title, description, status);
+        return taskService.findAll().stream().filter(filterCriteria::isMatching).toList();
     }
 
     @GetMapping("/{id}")
