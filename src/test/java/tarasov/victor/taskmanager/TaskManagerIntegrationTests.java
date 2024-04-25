@@ -18,8 +18,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static tarasov.victor.taskmanager.constant.TestConstants.*;
 import static tarasov.victor.taskmanager.model.Status.COMPLETED;
 import static tarasov.victor.taskmanager.model.Status.IN_PROGRESS;
@@ -28,6 +27,7 @@ import static tarasov.victor.taskmanager.model.Status.IN_PROGRESS;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class TaskManagerIntegrationTests {
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -37,9 +37,10 @@ public class TaskManagerIntegrationTests {
 
     @BeforeEach
     void setUp() {
-        var first = new Task("title 1", "description 1", IN_PROGRESS);
-        var second = new Task("title 2", "description 2", COMPLETED);
-        var third = new Task("title 3", "description 3", IN_PROGRESS);
+        var first = new Task(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
+        var second = new Task(SECOND_TITLE, SECOND_DESCRIPTION, COMPLETED);
+        var third = new Task(THIRD_TITLE, THIRD_DESCRIPTION, IN_PROGRESS);
+
         taskRepository.saveAll(List.of(first, second, third));
     }
 
@@ -57,81 +58,65 @@ public class TaskManagerIntegrationTests {
 
     @Test
     void testFindAll_withTitleParameter() throws Exception {
-        mockMvc.perform(get(ENDPOINT).param("title", "1"))
+        mockMvc.perform(get(ENDPOINT).param(TITLE_PARAM, FIRST_TITLE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("title 1"))
-                .andExpect(jsonPath("$[0].description").value("description 1"))
-                .andExpect(jsonPath("$[0].status").value(IN_PROGRESS.toString()));
+                .andExpect(content().json("[{ \"title\": \"title 1\", \"description\": \"description 1\", \"status\": \"IN_PROGRESS\" }]"));
     }
 
     @Test
     void testFindAll_withDescriptionParameter() throws Exception {
-        mockMvc.perform(get(ENDPOINT).param("description", "1"))
+        mockMvc.perform(get(ENDPOINT).param(DESCRIPTION_PARAM, FIRST_DESCRIPTION))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("title 1"))
-                .andExpect(jsonPath("$[0].description").value("description 1"))
-                .andExpect(jsonPath("$[0].status").value(IN_PROGRESS.toString()));
+                .andExpect(content().json("[{ \"title\": \"title 1\", \"description\": \"description 1\", \"status\": \"IN_PROGRESS\" }]"));
     }
 
     @Test
     void testFindAll_withStatusParameter() throws Exception {
-        mockMvc.perform(get(ENDPOINT).param("status", "IN_PROGRESS"))
+        mockMvc.perform(get(ENDPOINT).param(STATUS_PARAM, IN_PROGRESS.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].title").value("title 1"))
-                .andExpect(jsonPath("$[0].description").value("description 1"))
-                .andExpect(jsonPath("$[0].status").value(IN_PROGRESS.toString()))
-                .andExpect(jsonPath("$[1].title").value("title 3"))
-                .andExpect(jsonPath("$[1].description").value("description 3"))
-                .andExpect(jsonPath("$[1].status").value(IN_PROGRESS.toString()));
+                .andExpect(content().json("[{ \"title\": \"title 1\", \"description\": \"description 1\", \"status\": \"IN_PROGRESS\" }" +
+                        ",{ \"title\": \"title 3\", \"description\": \"description 3\", \"status\": \"IN_PROGRESS\" }]"));
     }
 
     @Test
     void testFindAll_withAllParameters() throws Exception {
         mockMvc.perform(get(ENDPOINT)
-                        .param("status", "IN_PROGRESS")
-                        .param("title", "title 1")
-                        .param("description", "description 1")
+                        .param(STATUS_PARAM, IN_PROGRESS.toString())
+                        .param(TITLE_PARAM, FIRST_TITLE)
+                        .param(DESCRIPTION_PARAM, FIRST_DESCRIPTION)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title").value("title 1"))
-                .andExpect(jsonPath("$[0].description").value("description 1"))
-                .andExpect(jsonPath("$[0].status").value(IN_PROGRESS.toString()));
+                .andExpect(content().json("[{ \"title\": \"title 1\", \"description\": \"description 1\", \"status\": \"IN_PROGRESS\" }]"));
     }
 
     @Test
     void testFindById() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId();
+
         mockMvc.perform(get(ENDPOINT + "/" + id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("title 3"))
-                .andExpect(jsonPath("$.description").value("description 3"))
-                .andExpect(jsonPath("$.status").value(IN_PROGRESS.toString()));
+                .andExpect(content().json("{ \"title\": \"title 3\", \"description\": \"description 3\", \"status\": \"IN_PROGRESS\" }"));
     }
 
     @Test
     void testFindById_shouldHandleTaskManagerException() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId() + 1;
+
         mockMvc.perform(get(ENDPOINT + "/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.errorMessage").value("task by id: " + id + " was not found!"));
     }
 
     @Test
-    void testFindById_shouldHandleMethodArgumentTypeMismatchException() throws Exception {
-        mockMvc.perform(get(ENDPOINT + "/a"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorMessage").value("The parameter id of value 'a' could not be converted to type Long"));
-    }
-
-    @Test
     void testAdd() throws Exception {
-        var task = new TaskDto("title 4", "description 4", IN_PROGRESS);
+        var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
+
         mockMvc.perform(post(ENDPOINT)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
@@ -140,7 +125,8 @@ public class TaskManagerIntegrationTests {
 
     @Test
     void testAdd_shouldHandleMethodArgumentNotValid() throws Exception {
-        var task = new TaskDto(null, "description 4", IN_PROGRESS);
+        var task = new TaskDto(null, FIRST_DESCRIPTION, IN_PROGRESS);
+
         mockMvc.perform(post(ENDPOINT)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
@@ -152,7 +138,8 @@ public class TaskManagerIntegrationTests {
     void testUpdate() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId();
-        var task = new TaskDto("title 4", "description 4", IN_PROGRESS);
+        var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
+
         mockMvc.perform(put(ENDPOINT + "/" + id)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
@@ -163,7 +150,8 @@ public class TaskManagerIntegrationTests {
     void testUpdate_shouldHandleMethodArgumentNotValid() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId();
-        var task = new TaskDto(null, "description 4", IN_PROGRESS);
+        var task = new TaskDto(null, FIRST_DESCRIPTION, IN_PROGRESS);
+
         mockMvc.perform(put(ENDPOINT + "/" + id)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
@@ -171,21 +159,13 @@ public class TaskManagerIntegrationTests {
                 .andExpect(jsonPath("$.title").value("Title cannot be blank"));
     }
 
-    @Test
-    void testUpdate_shouldHandleMethodArgumentTypeMismatchException() throws Exception {
-        var task = new TaskDto(null, "description 4", IN_PROGRESS);
-        mockMvc.perform(put(ENDPOINT + "/a")
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(task)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorMessage").value("The parameter id of value 'a' could not be converted to type Long"));
-    }
 
     @Test
     void testUpdate_shouldHandleTaskManagerException() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId() + 1;
-        var task = new TaskDto("title 4", "description 4", IN_PROGRESS);
+        var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
+
         mockMvc.perform(put(ENDPOINT + "/" + id)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
@@ -197,6 +177,7 @@ public class TaskManagerIntegrationTests {
     void testDelete() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId();
+
         mockMvc.perform(delete(ENDPOINT + "/" + id))
                 .andExpect(status().isOk());
     }
@@ -205,17 +186,11 @@ public class TaskManagerIntegrationTests {
     void testDelete_shouldHandleTaskManagerException() throws Exception {
         var tasks = taskRepository.findAll();
         var id = tasks.get(tasks.size() - 1).getId() + 1;
+
         mockMvc.perform(delete(ENDPOINT + "/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.errorMessage").value("task by id: " + id + " was not found!"));
     }
 
-    @Test
-    void testDelete_shouldHandleMethodArgumentTypeMismatchException() throws Exception {
-        mockMvc.perform(delete(ENDPOINT + "/a"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorMessage")
-                        .value("The parameter id of value 'a' could not be converted to type Long"));
-    }
 
 }

@@ -7,16 +7,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @OpenAPIDefinition(
-		info = @Info(
-				title = "Task Management REST API Documentation",
-				description = "REST API for managing tasks",
-				version = "v1"
-		)
+        info = @Info(
+                title = "Task Management REST API Documentation",
+                description = "REST API for managing tasks",
+                version = "v1"
+        )
 )
 public class TaskManagerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TaskManagerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TaskManagerApplication.class, args);
+    }
 
 }

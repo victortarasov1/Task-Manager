@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
+
     @Override
     public List<Task> findAll() {
         return taskRepository.findAll();
