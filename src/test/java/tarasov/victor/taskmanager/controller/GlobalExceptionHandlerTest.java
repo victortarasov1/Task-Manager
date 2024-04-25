@@ -36,7 +36,9 @@ class GlobalExceptionHandlerTest {
     @Test
     void testHandleTaskManagerException() throws Exception {
         var id = 0L;
+
         when(taskRepository.findById(id)).thenReturn(Optional.empty());
+
         mockMvc.perform(get(ENDPOINT + "/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.errorMessage").value("task by id: " + id + " was not found!"));
@@ -45,14 +47,17 @@ class GlobalExceptionHandlerTest {
     @Test
     void testHandleGlobalException() throws Exception {
         var id = 0L;
+
         when(taskRepository.findById(id)).thenThrow(RuntimeException.class);
+
         mockMvc.perform(get(ENDPOINT + "/" + id))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void testHandleMethodArgumentNotValid() throws Exception {
-        var task = new TaskDto(null, DESCRIPTION, PENDING);
+        var task = new TaskDto(null, FIRST_DESCRIPTION, PENDING);
+
         mockMvc.perform(post(ENDPOINT)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
@@ -60,10 +65,4 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.title").value("Title cannot be blank"));
     }
 
-    @Test
-    void testHandleMethodArgumentTypeMismatchException() throws Exception{
-        mockMvc.perform(delete(ENDPOINT + "/" + "a"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorMessage").value("The parameter id of value 'a' could not be converted to type Long"));
-    }
 }

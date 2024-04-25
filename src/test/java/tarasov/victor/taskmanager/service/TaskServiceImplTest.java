@@ -29,8 +29,11 @@ class TaskServiceImplTest {
     @Test
     void testFindAll() {
         var expected = List.of(new Task(), new Task());
+
         when(taskRepository.findAll()).thenReturn(expected);
+
         var result = taskService.findAll();
+
         assertSame(expected, result);
     }
 
@@ -39,58 +42,75 @@ class TaskServiceImplTest {
         var id = 0L;
         var expected = new Task();
         expected.setId(id);
+
         when(taskRepository.findById(id)).thenReturn(Optional.of(expected));
+
         var result = taskService.findById(id);
+
         assertSame(expected.getId(), result.getId());
     }
 
     @Test
     void testFindById_shouldThrowTaskWasNotFoundException() {
         var id = 0L;
+
         when(taskRepository.findById(id)).thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> taskService.findById(id)).isInstanceOf(TaskWasNotFoundByIdException.class);
     }
 
     @Test
     void testAdd() {
-        var task = new TaskDto(TITLE, DESCRIPTION, PENDING);
+        var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
+
         taskService.add(task);
+
         verify(taskRepository, times(1)).save(any(Task.class));
     }
 
     @Test
     void testUpdate() {
         var id = 0L;
-        var old = new Task(TITLE, DESCRIPTION, PENDING);
+        var old = new Task(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
         old.setId(id);
-        var newTask = new TaskDto(UPDATED_TITLE, UPDATED_DESCRIPTION, COMPLETED);
+        var newTask = new TaskDto(SECOND_TITLE, SECOND_DESCRIPTION, COMPLETED);
+
         when(taskRepository.findById(id)).thenReturn(Optional.of(old));
+
         taskService.update(newTask, id);
-        assertSame(old.getDescription(), UPDATED_DESCRIPTION);
+
+        assertSame(old.getDescription(),SECOND_DESCRIPTION);
         assertSame(old.getStatus(), Status.COMPLETED);
-        assertSame(old.getTitle(), UPDATED_TITLE);
+        assertSame(old.getTitle(), SECOND_TITLE);
 
     }
 
     @Test
     void testUpdate_shouldThrownTaskWasNotFoundByIdException() {
         var id = 0L;
+
         when(taskRepository.findById(id)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> taskService.update(new TaskDto(TITLE, DESCRIPTION, IN_PROGRESS), id)).isInstanceOf(TaskWasNotFoundByIdException.class);
+
+        assertThatThrownBy(() -> taskService.update(new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS), id)).isInstanceOf(TaskWasNotFoundByIdException.class);
     }
 
     @Test
     void testDelete() {
         var id = 0L;
+
         when(taskRepository.findById(id)).thenReturn(Optional.of(new Task()));
+
         taskService.delete(id);
+
         verify(taskRepository, times(1)).findById(id);
     }
 
     @Test
     void testDelete_shouldThrownTaskWasNotFoundByIdException() {
         var id = 0L;
+
         when(taskRepository.findById(id)).thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> taskService.delete(id)).isInstanceOf(TaskWasNotFoundByIdException.class);
     }
 
