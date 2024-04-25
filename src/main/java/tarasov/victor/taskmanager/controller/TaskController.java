@@ -38,7 +38,7 @@ public class TaskController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task found"),
             @ApiResponse(responseCode = "409", description = "Task not found by ID"),
-            @ApiResponse(responseCode = "400", description = "Id type mismatch")
+            @ApiResponse(responseCode = "400", description = "Invalid request, e.g., ID type mismatch")
     })
     public Task findById(@PathVariable Long id) {
         return taskService.findById(id);
@@ -71,7 +71,7 @@ public class TaskController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task deleted successfully"),
             @ApiResponse(responseCode = "409", description = "Task not found by ID"),
-            @ApiResponse(responseCode = "400", description = "Id type mismatch")
+            @ApiResponse(responseCode = "400", description = "Invalid request, e.g., ID type mismatch")
     })
     public void delete(@PathVariable Long id) {
         taskService.delete(id);
