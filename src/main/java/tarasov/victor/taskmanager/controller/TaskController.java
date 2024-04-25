@@ -51,8 +51,8 @@ public class TaskController {
             @ApiResponse(responseCode = "201", description = "Task created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request body")
     })
-    public void add(@RequestBody @Valid TaskDto dto) {
-        taskService.add(dto);
+    public void create(@RequestBody @Valid TaskDto dto) {
+        taskService.create(dto);
     }
 
     @PutMapping("/{id}")
