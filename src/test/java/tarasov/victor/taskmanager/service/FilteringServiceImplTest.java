@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static tarasov.victor.taskmanager.constant.TestConstants.*;
 import static tarasov.victor.taskmanager.model.Status.*;
 
 class FilteringServiceImplTest {
@@ -22,9 +23,9 @@ class FilteringServiceImplTest {
 
     @Test
     void testFilter_whenOnlyTitleParamProvided() {
-        var first = new Task("title 1", "description 1", IN_PROGRESS);
+        var first = new Task(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
         first.setId(0L);
-        var second = new Task("title 2", "description 2", COMPLETED);
+        var second = new Task(SECOND_TITLE, SECOND_DESCRIPTION, COMPLETED);
         second.setId(1L);
         var tasks = List.of(first, second);
         var result = filteringService.filter(tasks, "1", null, null);
@@ -34,9 +35,9 @@ class FilteringServiceImplTest {
 
     @Test
     void testFilter_whenOnlyDescriptionParamProvided() {
-        var first = new Task("title 1", "description 1", IN_PROGRESS);
+        var first = new Task(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
         first.setId(0L);
-        var second = new Task("title 2", "description 2", COMPLETED);
+        var second = new Task(SECOND_TITLE, SECOND_DESCRIPTION, COMPLETED);
         second.setId(1L);
         var tasks = List.of(first, second);
         var result = filteringService.filter(tasks, null, "1", null);
@@ -46,9 +47,9 @@ class FilteringServiceImplTest {
 
     @Test
     void testFilter_whenOnlyStatusParamProvided() {
-        var first = new Task("title 1", "description 1", PENDING);
+        var first = new Task(FIRST_TITLE, FIRST_DESCRIPTION, PENDING);
         first.setId(0L);
-        var second = new Task("title 2", "description 2", COMPLETED);
+        var second = new Task(SECOND_TITLE, SECOND_DESCRIPTION, COMPLETED);
         second.setId(1L);
         var tasks = List.of(first, second);
         var result = filteringService.filter(tasks, null, null, PENDING);
@@ -58,14 +59,14 @@ class FilteringServiceImplTest {
 
     @Test
     void testFilter_whenAllParamsProvided() {
-        var first = new Task("title 1", "description 1", IN_PROGRESS);
+        var first = new Task(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
         first.setId(0L);
-        var second = new Task("title 2", "description 2", COMPLETED);
+        var second = new Task(SECOND_TITLE, SECOND_DESCRIPTION, COMPLETED);
         second.setId(1L);
-        var third = new Task("title 12", "description 3", IN_PROGRESS);
+        var third = new Task(THIRD_TITLE, THIRD_DESCRIPTION, IN_PROGRESS);
         third.setId(2L);
         var tasks = List.of(first, second, third);
-        var result = filteringService.filter(tasks, "1", "descr", IN_PROGRESS);
+        var result = filteringService.filter(tasks, "title", "descr", IN_PROGRESS);
 
         assertEquals(2, result.size());
         assertEquals(first.getId(), result.get(0).getId());
