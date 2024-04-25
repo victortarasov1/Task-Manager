@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import tarasov.victor.taskmanager.model.Status;
 import tarasov.victor.taskmanager.model.Task;
+
 @Schema(description = "DTO for creating or updating a task")
 public record TaskDto(
         @NotBlank(message = "Title cannot be blank")
@@ -23,6 +24,6 @@ public record TaskDto(
         Status status
 ) {
     public Task createNewTask() {
-       return new Task(title, description, status);
+        return new Task(title, description, status);
     }
 }
