@@ -55,7 +55,7 @@ You can also test the endpoints using the Postman collection provided in the pos
           }
           ```
     - `409 Conflict`: Task not found by ID
-    - `400 Bad Request`: Id type mismatch
+    - `400 Bad Request`: Invalid request, e.g., ID type mismatch
 
 #### Create a New Task
 
@@ -107,7 +107,7 @@ You can also test the endpoints using the Postman collection provided in the pos
 - **Responses:**
     - `200 OK`: Task deleted successfully
     - `409 Conflict`: Task not found by ID
-    - `400 Bad Request`: Id type mismatch
+    - `400 Bad Request`: Invalid request, e.g., ID type mismatch
 
 
 
