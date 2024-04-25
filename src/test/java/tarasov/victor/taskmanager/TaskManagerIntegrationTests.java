@@ -114,7 +114,7 @@ public class TaskManagerIntegrationTests {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testCreate() throws Exception {
         var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
 
         mockMvc.perform(post(ENDPOINT)
@@ -124,7 +124,7 @@ public class TaskManagerIntegrationTests {
     }
 
     @Test
-    void testAdd_shouldHandleMethodArgumentNotValid() throws Exception {
+    void testCreate_shouldHandleMethodArgumentNotValid() throws Exception {
         var task = new TaskDto(null, FIRST_DESCRIPTION, IN_PROGRESS);
 
         mockMvc.perform(post(ENDPOINT)

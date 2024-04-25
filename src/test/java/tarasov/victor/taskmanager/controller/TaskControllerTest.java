@@ -127,14 +127,14 @@ class TaskControllerTest {
     }
 
     @Test
-    void testAdd() throws Exception {
+    void testCreate() throws Exception {
         var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
 
         mockMvc.perform(post(ENDPOINT)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task)))
                 .andExpect(status().isCreated());
-        verify(taskService, times(1)).add(eq(task));
+        verify(taskService, times(1)).create(eq(task));
     }
 
     @Test

@@ -60,10 +60,10 @@ class TaskServiceImplTest {
     }
 
     @Test
-    void testAdd() {
+    void testCreate() {
         var task = new TaskDto(FIRST_TITLE, FIRST_DESCRIPTION, IN_PROGRESS);
 
-        taskService.add(task);
+        taskService.create(task);
 
         verify(taskRepository, times(1)).save(any(Task.class));
     }

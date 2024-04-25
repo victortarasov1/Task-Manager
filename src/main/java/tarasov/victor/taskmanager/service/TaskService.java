@@ -10,7 +10,7 @@ public interface TaskService {
 
     Task findById(Long id);
 
-    void add(TaskDto taskDto);
+    void create(TaskDto taskDto);
 
     void update(TaskDto taskDto, Long id);
 

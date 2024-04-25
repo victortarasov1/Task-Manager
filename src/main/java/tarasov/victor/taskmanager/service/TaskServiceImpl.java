@@ -27,7 +27,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void add(TaskDto taskDto) {
+    public void create(TaskDto taskDto) {
         taskRepository.save(taskDto.createNewTask());
     }
 
