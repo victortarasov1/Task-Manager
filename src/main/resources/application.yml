@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: taskmanager
+  datasource:
+    url: jdbc:mysql://localhost:3306/tasks-db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate.ddl-auto: update
+    show-sql: true

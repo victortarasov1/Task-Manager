@@ -1,0 +1,27 @@
+services:
+  tasksdb:
+    container_name: tasks-db
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: tasks-db
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+  tasks:
+    image: "victortarasov/taskmanager:v1"
+    container_name: tasks-ms
+    ports:
+      - "8080:8080"
+    depends_on:
+      tasksdb:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "taskmanager"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://tasks-db:3306/tasks-db"
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+networks:
+  task-manager:
+    driver: "bridge"
