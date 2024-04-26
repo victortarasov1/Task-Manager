@@ -7,13 +7,13 @@
 	},
 	"item": [
 		{
-			"name": "add task",
+			"name": "create task",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\" : \"some title\",\r\n    \"description\" : \"some description\",\r\n    \"status\" : \"COMPLETEDD\"\r\n}",
+					"raw": "{\r\n    \"title\" : \"Task 1\",\r\n    \"description\" : \"description\",\r\n    \"status\" : \"PENDING\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -35,9 +35,21 @@
 		},
 		{
 			"name": "get all tasks",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8080/tasks",
 					"host": [
@@ -49,7 +61,7 @@
 					],
 					"query": [
 						{
-							"key": null,
+							"key": "",
 							"value": "",
 							"disabled": true
 						}
@@ -125,7 +137,7 @@
 			"response": []
 		},
 		{
-			"name": "get all task using filters",
+			"name": "get all task with all filters",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -151,6 +163,269 @@
 							"key": "status",
 							"value": "PENDING"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all tasks with title filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks?title=Task 1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "Task 1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all tasks with description filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks?&description=description",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "description",
+							"value": "description"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all tasks with status filter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks?status=PENDING",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "PENDING"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get task by id (id not found)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks/-1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get task by id (id type mismatch)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks/a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create task (invalid body)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\" : \"description\",\r\n    \"status\" : \"PENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update task (id not found)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\" : \"some new title\",\r\n    \"description\" : \"some description\",\r\n    \"status\" : \"PENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/tasks/-1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update task (invalid body)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\" : \"some description\",\r\n    \"status\" : \"PENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/tasks/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update task (id type mismatch)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\" : \"some new title\",\r\n    \"description\" : \"some description\",\r\n    \"status\" : \"PENDING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/tasks/a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task (id not found)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks/-1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task (id type mismatch)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/tasks/a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"a"
 					]
 				}
 			},
